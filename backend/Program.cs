@@ -4,6 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using ProjectTasksManager.Data;
 using ProjectTasksManager.Models;
+using ProjectTasksManager.Repositories;
+using ProjectTasksManager.Services;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -34,6 +38,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
