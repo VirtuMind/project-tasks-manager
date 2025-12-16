@@ -15,6 +15,7 @@ dist-ssr
 obj/
 bin/
 .vs/
+/backend/appsettings.*.json
 
 # Editor directories and files
 .vscode/*
