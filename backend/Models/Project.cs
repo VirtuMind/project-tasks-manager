@@ -10,5 +10,5 @@ public class Project
     public int UserId { get; set; }
     public User User { get; set; } = null!;
 
-    public ICollection<ProjectTask> Tasks { get; set; } = [];
+    public List<ProjectTask> Tasks { get; set; } = [];
 }
