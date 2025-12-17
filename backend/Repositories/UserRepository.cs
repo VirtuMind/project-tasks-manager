@@ -10,15 +10,15 @@ public interface IUserRepository
     Task<User?> GetByEmailAsync(string email);
 }
 
-public class UserRepository(AppDbContext context) : IUserRepository
+public class UserRepository(AppDbContext _context) : IUserRepository
 {
     public async Task<User?> GetByIdAsync(int id)
     {
-        return await context.Users.FindAsync(id);
+        return await _context.Users.FindAsync(id);
     }
 
     public async Task<User?> GetByEmailAsync(string email)
     {
-        return await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 }

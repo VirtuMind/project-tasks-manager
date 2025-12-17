@@ -9,20 +9,21 @@ namespace ProjectTasksManager.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class ProjectsController(IProjectService projectService) : ControllerBase
+public class ProjectsController(IProjectService _projectService) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<List<ProjectDto>>> GetProjects()
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var projects = await projectService.GetUserProjectsAsync(userId);
+        var projects = await _projectService.GetUserProjectsAsync(userId);
         return Ok(projects);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ProjectDto>> GetProject(int id)
     {
-        var project = await projectService.GetProjectByIdAsync(id);
+        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var project = await _projectService.GetUserProjectByIdAsync(id, userId);
 
         if (project is null)
             return NotFound("Project not found");
@@ -34,7 +35,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     public async Task<ActionResult<ProjectDto>> CreateProject([FromBody] CreateProjectRequest request)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        bool result = await projectService.CreateProjectAsync(request, userId);
+        bool result = await _projectService.CreateProjectAsync(request, userId);
         if(!result)
             return BadRequest("Could not create project");
         return Created();
@@ -44,7 +45,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     public async Task<ActionResult<ProjectDto>> UpdateProject(int id, [FromBody] UpdateProjectRequest request)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var project = await projectService.UpdateProjectAsync(id, request, userId);
+        var project = await _projectService.UpdateProjectAsync(id, request, userId);
 
         if (project is null)
             return NotFound("Project not found");
@@ -57,7 +58,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     public async Task<IActionResult> DeleteProject(int id)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var result = await projectService.DeleteProjectAsync(id, userId);
+        var result = await _projectService.DeleteProjectAsync(id, userId);
 
         if (!result)
             return NotFound("Project not found");
@@ -69,7 +70,7 @@ public class ProjectsController(IProjectService projectService) : ControllerBase
     public async Task<ActionResult<ProjectProgressDto>> GetProjectProgress(int id)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var progress = await projectService.GetProjectProgressAsync(id, userId);
+        var progress = await _projectService.GetProjectProgressAsync(id, userId);
 
         if (progress is null)
             return NotFound("Project not found");

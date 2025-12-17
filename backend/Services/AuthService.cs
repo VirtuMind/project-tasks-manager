@@ -16,13 +16,13 @@ public interface IAuthService
 }
 
 public class JwtService(
-    IUserRepository userRepository,
-    IMapper mapper,
-    IConfiguration configuration) : IAuthService
+    IUserRepository _userRepository,
+    IMapper _mapper,
+    IConfiguration _configuration) : IAuthService
 {
     public async Task<LoginResponse?> LoginAsync(LoginRequest request)
     {
-        var user = await userRepository.GetByEmailAsync(request.Email);
+        var user = await _userRepository.GetByEmailAsync(request.Email);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
@@ -31,17 +31,17 @@ public class JwtService(
 
         var token = GenerateJwtToken(user);
 
-        return new LoginResponse(token, mapper.Map<UserDto>(user));
+        return new LoginResponse(token, _mapper.Map<UserDto>(user));
     }
 
     public async Task<User?> GetUserByIdAsync(int userId)
     {
-        return await userRepository.GetByIdAsync(userId);
+        return await _userRepository.GetByIdAsync(userId);
     }
 
     private string GenerateJwtToken(User user)
     {
-        var key = configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
+        var key = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key not configured");
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -53,8 +53,8 @@ public class JwtService(
         };
 
         var token = new JwtSecurityToken(
-            issuer: configuration["Jwt:Issuer"],
-            audience: configuration["Jwt:Audience"],
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(24),
             signingCredentials: credentials

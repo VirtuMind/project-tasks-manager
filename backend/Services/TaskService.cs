@@ -18,69 +18,69 @@ public interface ITaskService
 }
 
 public class TaskService(
-    ITaskRepository taskRepository,
-    IProjectRepository projectRepository,
-    IMapper mapper) : ITaskService
+    ITaskRepository _taskRepository,
+    IProjectRepository _projectRepository,
+    IMapper _mapper) : ITaskService
 {
     public async Task<List<TaskDto>> GetProjectTasksAsync(int projectId, int userId)
     {
-        var projectExists = await projectRepository.UserProjectExistsAsync(projectId, userId);
+        var projectExists = await _projectRepository.UserProjectExistsAsync(projectId, userId);
 
         if (!projectExists)
             return [];
 
-        var tasks = await taskRepository.GetProjectTasksAsync(projectId);
-        return mapper.Map<List<TaskDto>>(tasks);
+        var tasks = await _taskRepository.GetProjectTasksAsync(projectId);
+        return _mapper.Map<List<TaskDto>>(tasks);
     }
 
     public async Task<TaskDto?> GetTaskByIdAsync(int taskId, int projectId, int userId)
     {
-        var task = await taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
+        var task = await _taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
 
         if (task is null)
         {
             return null;
         }
 
-        return mapper.Map<TaskDto>(task);
+        return _mapper.Map<TaskDto>(task);
     }
 
     public async Task<TaskDto?> CreateTaskAsync(int projectId, CreateTaskRequest request, int userId)
     {
-        var projectExists = await projectRepository.UserProjectExistsAsync(projectId, userId);
+        var projectExists = await _projectRepository.UserProjectExistsAsync(projectId, userId);
 
         if (!projectExists)
         {
             return null;
         }
 
-        var task = mapper.Map<ProjectTask>(request);
+        var task = _mapper.Map<ProjectTask>(request);
         task.ProjectId = projectId;
 
-        await taskRepository.AddAsync(task);
-        await taskRepository.SaveChangesAsync();
+        await _taskRepository.AddAsync(task);
+        await _taskRepository.SaveChangesAsync();
 
-        return mapper.Map<TaskDto>(task);
+        return _mapper.Map<TaskDto>(task);
     }
 
     public async Task<TaskDto?> UpdateTaskAsync(int taskId, int projectId, UpdateTaskRequest request, int userId)
     {
-        var task = await taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
+        var task = await _taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
 
         if (task is null)
         {
             return null;
         }
 
-        mapper.Map(request, task);
-        await taskRepository.SaveChangesAsync();
+        _mapper.Map(request, task);
+        await _taskRepository.SaveChangesAsync();
 
-        return mapper.Map<TaskDto>(task);
+        return _mapper.Map<TaskDto>(task);
     }
 
     public async Task<TaskDto?> MarkTaskAsCompletedAsync(int taskId, int projectId, int userId)
     {
-        var task = await taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
+        var task = await _taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
 
         if (task is null)
         {
@@ -90,22 +90,22 @@ public class TaskService(
         task.IsCompleted = true;
         task.CompletedAt = DateTime.UtcNow;
 
-        await taskRepository.SaveChangesAsync();
+        await _taskRepository.SaveChangesAsync();
 
-        return mapper.Map<TaskDto>(task);
+        return _mapper.Map<TaskDto>(task);
     }
 
     public async Task<bool> DeleteTaskAsync(int taskId, int projectId, int userId)
     {
-        var task = await taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
+        var task = await _taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
 
         if (task is null)
         {
             return false;
         }
 
-        taskRepository.Remove(task);
-        await taskRepository.SaveChangesAsync();
+        _taskRepository.Remove(task);
+        await _taskRepository.SaveChangesAsync();
 
         return true;
     }

@@ -8,7 +8,7 @@ public interface IProjectRepository
 {
     Task<List<Project>> GetUserProjectsWithTasksAsync(int userId);
     Task<Project?> GetByIdAsync(int projectId);
-    Task<Project?> GetUserProjectByIdAsync(int projectId, int userId);
+    Task<Project?> GetProjectByIdAndUserIdAsync(int projectId, int userId);
     Task<Project?> GetUserProjectWithTasksAsync(int projectId);
     Task<bool> UserProjectExistsAsync(int projectId, int userId);
     Task AddAsync(Project project);
@@ -16,11 +16,11 @@ public interface IProjectRepository
     Task<bool> SaveChangesAsync();
 }
 
-public class ProjectRepository(AppDbContext context) : IProjectRepository
+public class ProjectRepository(AppDbContext _context) : IProjectRepository
 {
     public async Task<List<Project>> GetUserProjectsWithTasksAsync(int userId)
     {
-        return await context.Projects
+        return await _context.Projects
             .Where(p => p.UserId == userId)
             .Include(p => p.Tasks)
             .OrderByDescending(p => p.CreatedAt)
@@ -29,40 +29,40 @@ public class ProjectRepository(AppDbContext context) : IProjectRepository
 
     public async Task<Project?> GetByIdAsync(int projectId)
     {
-        return await context.Projects.FindAsync(projectId);
+        return await _context.Projects.FindAsync(projectId);
     }
 
-    public async Task<Project?> GetUserProjectByIdAsync(int projectId, int userId)
+    public async Task<Project?> GetProjectByIdAndUserIdAsync(int projectId, int userId)
     {
-        return await context.Projects
+        return await _context.Projects
             .FirstOrDefaultAsync(p => p.Id == projectId && p.UserId == userId);
     }
 
     public async Task<Project?> GetUserProjectWithTasksAsync(int projectId)
     {
-        return await context.Projects
+        return await _context.Projects
             .Include(p => p.Tasks)
             .FirstOrDefaultAsync(p => p.Id == projectId);
     }
 
     public async Task<bool> UserProjectExistsAsync(int projectId, int userId)
     {
-        return await context.Projects
+        return await _context.Projects
             .AnyAsync(p => p.Id == projectId && p.UserId == userId);
     }
 
     public async Task AddAsync(Project project)
     {
-        await context.Projects.AddAsync(project);
+        await _context.Projects.AddAsync(project);
     }
 
     public void Remove(Project project)
     {
-        context.Projects.Remove(project);
+        _context.Projects.Remove(project);
     }
 
     public async Task<bool> SaveChangesAsync()
     {
-        return await context.SaveChangesAsync() > 0;
+        return await _context.SaveChangesAsync() > 0;
     }
 }

@@ -6,12 +6,12 @@ namespace ProjectTasksManager.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService _authService) : ControllerBase
 {
     [HttpPost("login")]
     public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest request)
     {
-        var result = await authService.LoginAsync(request);
+        var result = await _authService.LoginAsync(request);
 
         if (result is null)
            return Unauthorized("Invalid email or password");
