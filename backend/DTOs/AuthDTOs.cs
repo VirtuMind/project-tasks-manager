@@ -17,3 +17,8 @@ public record UserDto(
     string Email,
     string Name
 );
+
+public record ApiResponse(
+    string Message,
+    int StatusCode
+);

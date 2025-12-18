@@ -14,7 +14,7 @@ public class AuthController(IAuthService _authService) : ControllerBase
         var result = await _authService.LoginAsync(request);
 
         if (result is null)
-           return Unauthorized("Invalid email or password");
+           return Unauthorized(new ApiResponse("Invalid email or password", StatusCodes.Status401Unauthorized));
 
         return Ok(result);
     }
