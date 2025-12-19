@@ -8,7 +8,7 @@ public interface IProjectRepository
 {
     Task<List<Project>> GetUserProjectsWithTasksAsync(int userId);
     Task<Project?> GetByIdAsync(int projectId);
-    Task<Project?> GetProjectByIdAndUserIdAsync(int projectId, int userId);
+    Task<Project?> GetProjectDetailsByIdAndUserIdAsync(int projectId, int userId);
     Task<Project?> GetUserProjectWithTasksAsync(int projectId);
     Task<bool> UserProjectExistsAsync(int projectId, int userId);
     Task AddAsync(Project project);
@@ -32,9 +32,10 @@ public class ProjectRepository(AppDbContext _context) : IProjectRepository
         return await _context.Projects.FindAsync(projectId);
     }
 
-    public async Task<Project?> GetProjectByIdAndUserIdAsync(int projectId, int userId)
+    public async Task<Project?> GetProjectDetailsByIdAndUserIdAsync(int projectId, int userId)
     {
         return await _context.Projects
+            .Include(p => p.Tasks)
             .FirstOrDefaultAsync(p => p.Id == projectId && p.UserId == userId);
     }
 

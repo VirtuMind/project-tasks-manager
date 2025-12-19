@@ -20,10 +20,10 @@ public class ProjectsController(IProjectService _projectService) : ControllerBas
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ProjectDto>> GetProject(int id)
+    public async Task<ActionResult<ProjectDetailsDto>> GetProjectDetails(int id)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var project = await _projectService.GetUserProjectByIdAsync(id, userId);
+        var project = await _projectService.GetUserProjectDetailsByIdAsync(id, userId);
 
         if (project is null)
             return NotFound("Project not found");

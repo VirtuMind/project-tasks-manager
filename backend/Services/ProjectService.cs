@@ -13,7 +13,7 @@ public interface IProjectService
     Task<ProjectDto?> UpdateProjectAsync(int projectId, UpdateProjectRequest request, int userId);
     Task<bool> DeleteProjectAsync(int projectId, int userId);
     Task<ProjectProgressDto?> GetProjectProgressAsync(int projectId, int userId);
-    Task<ProjectDto?> GetUserProjectByIdAsync(int projectId, int userId);
+    Task<ProjectDetailsDto?> GetUserProjectDetailsByIdAsync(int projectId, int userId);
 }
 
 public class ProjectService(IProjectRepository _projectRepository, IMapper _mapper) : IProjectService
@@ -34,14 +34,14 @@ public class ProjectService(IProjectRepository _projectRepository, IMapper _mapp
         return _mapper.Map<ProjectDto>(project);
     }
 
-    public async Task<ProjectDto?> GetUserProjectByIdAsync(int projectId, int userId)
+    public async Task<ProjectDetailsDto?> GetUserProjectDetailsByIdAsync(int projectId, int userId)
     {
-        var project = await _projectRepository.GetProjectByIdAndUserIdAsync(projectId, userId);
+        var project = await _projectRepository.GetProjectDetailsByIdAndUserIdAsync(projectId, userId);
         
         if (project is null)
             return null;
 
-        return _mapper.Map<ProjectDto>(project);
+        return _mapper.Map<ProjectDetailsDto>(project);
     }
 
     public async Task<bool> CreateProjectAsync(CreateProjectRequest request, int userId)
@@ -71,7 +71,7 @@ public class ProjectService(IProjectRepository _projectRepository, IMapper _mapp
 
     public async Task<bool> DeleteProjectAsync(int projectId, int userId)
     {
-        var project = await _projectRepository.GetProjectByIdAndUserIdAsync(projectId, userId);
+        var project = await _projectRepository.GetProjectDetailsByIdAndUserIdAsync(projectId, userId);
 
         if (project is null)
             return false;

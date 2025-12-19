@@ -9,8 +9,8 @@ export interface Task {
   title: string;
   description: string;
   dueDate: string;
-  completed: boolean;
-  projectId: string;
+  isCompleted: boolean;
+  completedAt?: string;
   createdAt: string;
 }
 
@@ -26,6 +26,10 @@ export interface ProjectProgress {
   totalTasks: number;
   completedTasks: number;
   progressPercentage: number;
+}
+
+export interface ProjectDetails extends Project {
+  tasks: Task[];
 }
 
 export interface AuthState {

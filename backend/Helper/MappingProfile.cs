@@ -20,6 +20,10 @@ public class MappingProfile : Profile
                     : 0
             }));
 
+        CreateMap<Project, ProjectDetailsDto>()
+            .IncludeBase<Project, ProjectDto>()
+            .ForMember(dest => dest.Tasks, opt => opt.MapFrom(src => src.Tasks));
+
         CreateMap<CreateProjectRequest, Project>();
         CreateMap<UpdateProjectRequest, Project>();
 

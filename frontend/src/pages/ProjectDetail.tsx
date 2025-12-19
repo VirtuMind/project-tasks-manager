@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Project, Task, ProjectProgress } from "@/types";
+import { Project, Task, ProjectProgress, ProjectDetails } from "@/types";
 import { projectsApi, tasksApi } from "@/lib/api";
 import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";
@@ -26,7 +26,7 @@ const ProjectDetail = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const [project, setProject] = useState<Project | null>(null);
+  const [project, setProject] = useState<ProjectDetails | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [progress, setProgress] = useState<ProjectProgress>({
     totalTasks: 0,
@@ -46,14 +46,10 @@ const ProjectDetail = () => {
   const loadProjectData = async () => {
     try {
       setIsLoading(true);
-      const [projectData, tasksData, progressData] = await Promise.all([
-        projectsApi.getById(id!),
-        tasksApi.getByProject(id!),
-        projectsApi.getProgress(id!),
-      ]);
-      setProject(projectData);
-      setTasks(tasksData);
-      setProgress(progressData);
+      const projectDetails = await projectsApi.getById(id!);
+      setProject(projectDetails);
+      setTasks(projectDetails.tasks);
+      setProgress(projectDetails.stats);
     } catch (error) {
       toast({
         title: "Error",

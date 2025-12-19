@@ -21,6 +21,11 @@ public record ProjectDto
     public ProjectProgressDto Stats { get; init; } = null!;
 };
 
+public record ProjectDetailsDto : ProjectDto
+{
+    public List<TaskDto> Tasks { get; init; } = [];
+}
+
 public record ProjectProgressDto
 {
     public int TotalTasks { get; init; }

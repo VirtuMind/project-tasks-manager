@@ -5,6 +5,7 @@ import {
   ProjectProgress,
   AuthState,
   ApiResponse,
+  ProjectDetails,
 } from "@/types";
 
 const API_BASE_URL =
@@ -59,7 +60,7 @@ export const projectsApi = {
     return fetchApi("/projects");
   },
 
-  getById: async (id: string): Promise<Project> => {
+  getById: async (id: string): Promise<ProjectDetails> => {
     return fetchApi(`/projects/${id}`);
   },
 
