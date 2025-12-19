@@ -1,17 +1,14 @@
 import {
-  User,
   Project,
   Task,
-  ProjectProgress,
   AuthState,
   ApiResponse,
   ProjectDetails,
+  NewTask,
 } from "@/types";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5062/api";
+const API_BASE_URL = "http://localhost:5062/api";
 
-// Helper to get auth token
 const getAuthHeaders = (): HeadersInit => {
   const token = localStorage.getItem("auth_token");
   return {
@@ -20,7 +17,6 @@ const getAuthHeaders = (): HeadersInit => {
   };
 };
 
-// Generic fetch wrapper with error handling
 async function fetchApi<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -67,7 +63,7 @@ export const projectsApi = {
   create: async (data: {
     title: string;
     description?: string;
-  }): Promise<ApiResponse> => {
+  }): Promise<Project> => {
     return fetchApi("/projects", {
       method: "POST",
       body: JSON.stringify(data),
@@ -88,32 +84,31 @@ export const projectsApi = {
 
 // Tasks API
 export const tasksApi = {
-  getByProject: async (projectId: string): Promise<Task[]> => {
-    return fetchApi(`/projects/${projectId}/tasks`);
-  },
-
-  create: async (
-    projectId: string,
-    data: { title: string; description: string; dueDate: string }
-  ): Promise<Task> => {
-    return fetchApi(`/projects/${projectId}/tasks`, {
+  create: async (projectId: string, data: NewTask): Promise<Task> => {
+    return fetchApi(`/tasks/${projectId}`, {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
-  update: async (taskId: string, data: Partial<Task>): Promise<Task> => {
-    return fetchApi(`/tasks/${taskId}`, {
+  update: async (
+    projectId: string,
+    taskId: string,
+    data: Partial<Task>
+  ): Promise<Task> => {
+    return fetchApi(`/tasks/${projectId}/${taskId}`, {
       method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
-  toggleComplete: async (taskId: string): Promise<Task> => {
-    return fetchApi(`/tasks/${taskId}/toggle`, { method: "PATCH" });
+  toggleComplete: async (projectId: string, taskId: string): Promise<Task> => {
+    return fetchApi(`/tasks/${projectId}/${taskId}/toggle`, {
+      method: "PATCH",
+    });
   },
 
-  delete: async (taskId: string): Promise<void> => {
-    return fetchApi(`/tasks/${taskId}`, { method: "DELETE" });
+  delete: async (projectId: string, taskId: string): Promise<void> => {
+    return fetchApi(`/tasks/${projectId}/${taskId}`, { method: "DELETE" });
   },
 };
