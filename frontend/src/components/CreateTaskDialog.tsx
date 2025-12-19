@@ -1,42 +1,49 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Plus, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Plus, Loader2 } from "lucide-react";
+import { NewTask } from "@/types";
 
 interface CreateTaskDialogProps {
-  onSubmit: (data: { title: string; description: string; dueDate: string }) => Promise<void>;
+  onSubmit: (data: NewTask) => Promise<void>;
   isLoading?: boolean;
 }
 
-const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({ onSubmit, isLoading }) => {
+const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({
+  onSubmit,
+  isLoading,
+}) => {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dueDate, setDueDate] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSubmit({ title, description, dueDate });
-    setTitle('');
-    setDescription('');
-    setDueDate(format(new Date(), 'yyyy-MM-dd'));
+    await onSubmit({
+      title,
+      description,
+      dueDate: dueDate || null,
+    });
+    setTitle("");
+    setDescription("");
+    setDueDate("");
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="h-12 px-6 text-lg font-bold uppercase tracking-wide border-4 border-foreground bg-accent text-accent-foreground hover:bg-accent/80 hover:translate-x-1 hover:translate-y-1 hover:shadow-none shadow-md transition-all">
+        <Button className="h-12 px-6 text-lg font-bold uppercase tracking-wide border-4 border-foreground bg-success text-success-foreground hover:bg-success/80 hover:translate-x-1 hover:translate-y-1 hover:shadow-none shadow-md transition-all">
           <Plus className="mr-2 h-5 w-5" />
           Add Task
         </Button>
@@ -49,7 +56,10 @@ const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({ onSubmit, isLoading
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="task-title" className="text-sm font-bold uppercase tracking-wide">
+            <Label
+              htmlFor="task-title"
+              className="text-sm font-bold uppercase tracking-wide"
+            >
               Title *
             </Label>
             <Input
@@ -63,29 +73,33 @@ const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({ onSubmit, isLoading
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="task-description" className="text-sm font-bold uppercase tracking-wide">
-              Description *
+            <Label
+              htmlFor="task-description"
+              className="text-sm font-bold uppercase tracking-wide"
+            >
+              Description (optional)
             </Label>
             <Textarea
               id="task-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the task..."
-              required
               className="border-4 border-foreground bg-background min-h-24 font-mono resize-none"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="due-date" className="text-sm font-bold uppercase tracking-wide">
-              Due Date *
+            <Label
+              htmlFor="due-date"
+              className="text-sm font-bold uppercase tracking-wide"
+            >
+              Due Date (optional)
             </Label>
             <Input
               id="due-date"
               type="date"
               value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              required
+              onChange={(e) => setDueDate(e.target.value ?? "")}
               className="border-4 border-foreground bg-background h-12 text-lg font-mono"
             />
           </div>
@@ -101,13 +115,13 @@ const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({ onSubmit, isLoading
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !title.trim() || !description.trim()}
-              className="flex-1 h-12 font-bold uppercase tracking-wide border-4 border-foreground bg-primary text-primary-foreground hover:translate-x-1 hover:translate-y-1 hover:shadow-none shadow-md transition-all"
+              disabled={isLoading || !title.trim()}
+              className="flex-1 h-12 font-bold uppercase tracking-wide border-4 border-foreground bg-success text-success-foreground hover:translate-x-1 hover:translate-y-1 hover:shadow-none shadow-md transition-all hover:bg-success/80"
             >
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                'Create'
+                "Create"
               )}
             </Button>
           </div>
