@@ -14,6 +14,12 @@ export interface Task {
   createdAt: string;
 }
 
+export interface NewTask {
+  title: string;
+  description?: string;
+  dueDate?: string;
+}
+
 export interface Project {
   id: string;
   title: string;

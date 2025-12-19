@@ -42,10 +42,7 @@ const Home = () => {
     try {
       setIsCreating(true);
       const response = await projectsApi.create(data);
-
-      if (response?.statusCode === 201) {
-        await loadProjects();
-      }
+      setProjects([response, ...projects]);
 
       toast({
         title: "Success",
