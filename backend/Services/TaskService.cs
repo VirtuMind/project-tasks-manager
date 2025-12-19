@@ -47,12 +47,8 @@ public class TaskService(
 
     public async Task<TaskDto?> CreateTaskAsync(int projectId, CreateTaskRequest request, int userId)
     {
-        var projectExists = await _projectRepository.UserProjectExistsAsync(projectId, userId);
-
-        if (!projectExists)
-        {
+        if (!await _projectRepository.UserProjectExistsAsync(projectId, userId))
             return null;
-        }
 
         var task = _mapper.Map<ProjectTask>(request);
         task.ProjectId = projectId;
@@ -62,6 +58,7 @@ public class TaskService(
 
         return _mapper.Map<TaskDto>(task);
     }
+
 
     public async Task<TaskDto?> UpdateTaskAsync(int taskId, int projectId, UpdateTaskRequest request, int userId)
     {

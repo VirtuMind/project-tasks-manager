@@ -9,7 +9,7 @@ public interface IProjectService
 {
     Task<List<ProjectDto>> GetUserProjectsAsync(int userId);
     Task<ProjectDto?> GetProjectByIdAsync(int projectId);
-    Task<bool> CreateProjectAsync(CreateProjectRequest request, int userId);
+    Task<ProjectDto> CreateProjectAsync(CreateProjectRequest request, int userId);
     Task<ProjectDto?> UpdateProjectAsync(int projectId, UpdateProjectRequest request, int userId);
     Task<bool> DeleteProjectAsync(int projectId, int userId);
     Task<ProjectProgressDto?> GetProjectProgressAsync(int projectId, int userId);
@@ -44,14 +44,15 @@ public class ProjectService(IProjectRepository _projectRepository, IMapper _mapp
         return _mapper.Map<ProjectDetailsDto>(project);
     }
 
-    public async Task<bool> CreateProjectAsync(CreateProjectRequest request, int userId)
+    public async Task<ProjectDto> CreateProjectAsync(CreateProjectRequest request, int userId)
     {
         var project = _mapper.Map<Project>(request);
         project.UserId = userId;
 
         await _projectRepository.AddAsync(project);
+        await _projectRepository.SaveChangesAsync();
 
-        return await _projectRepository.SaveChangesAsync();
+        return _mapper.Map<ProjectDto>(project);
     }
 
     public async Task<ProjectDto?> UpdateProjectAsync(int projectId, UpdateProjectRequest request, int userId)

@@ -35,11 +35,11 @@ public class ProjectsController(IProjectService _projectService) : ControllerBas
     public async Task<ActionResult<ProjectDto>> CreateProject([FromBody] CreateProjectRequest request)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        bool result = await _projectService.CreateProjectAsync(request, userId);
-        if(!result)
-            return BadRequest("Could not create project");
-        return StatusCode(StatusCodes.Status201Created,
-                    new ApiResponse("Project created successfully", StatusCodes.Status201Created));
+        var result = await _projectService.CreateProjectAsync(request, userId);
+        if (result is null)
+            return BadRequest(new ApiResponse("Could not create project", StatusCodes.Status400BadRequest));
+
+        return StatusCode(StatusCodes.Status201Created, result);
     }
 
     [HttpPut("{id}")]

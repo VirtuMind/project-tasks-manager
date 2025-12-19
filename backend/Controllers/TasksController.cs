@@ -11,36 +11,16 @@ namespace ProjectTasksManager.Controllers;
 [Authorize]
 public class TasksController(ITaskService _taskService) : ControllerBase
 {
-    [HttpGet]
-    public async Task<ActionResult<List<TaskDto>>> GetTasks(int projectId)
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var tasks = await _taskService.GetProjectTasksAsync(projectId, userId);
-        return Ok(tasks);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<TaskDto>> GetTask(int projectId, int id)
-    {
-        int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var task = await _taskService.GetTaskByIdAsync(id, projectId, userId);
-
-        if (task is null)
-            return NotFound("Task not found");
-
-        return Ok(task);
-    }
-
-    [HttpPost]
+    [HttpPost("{projectId}")]
     public async Task<ActionResult<TaskDto>> CreateTask(int projectId, [FromBody] CreateTaskRequest request)
     {
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
         var task = await _taskService.CreateTaskAsync(projectId, request, userId);
 
         if (task is null)
-            return NotFound("Project not found");
+            return NotFound(new ApiResponse("Project Not found", StatusCodes.Status404NotFound));
 
-        return CreatedAtAction(nameof(GetTask), new { projectId, id = task.Id }, task);
+        return StatusCode(StatusCodes.Status201Created, task);
     }
 
     [HttpPut("{id}")]
