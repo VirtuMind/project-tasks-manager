@@ -9,13 +9,14 @@ const Header = () => {
   return (
     <header className="border-b-4 border-foreground bg-card">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div></div>
-
-        <div className="flex items-center gap-4">
+        <Link to="/">
           <div className="hidden sm:flex items-center gap-2 border-4 border-foreground bg-muted px-4 py-2">
             <User className="h-5 w-5" />
             <span className="font-mono font-bold">{user?.name}</span>
           </div>
+        </Link>
+
+        <div className="flex items-center gap-4">
           <Button
             onClick={logout}
             variant="outline"
