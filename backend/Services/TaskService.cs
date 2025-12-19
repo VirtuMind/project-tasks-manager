@@ -62,12 +62,10 @@ public class TaskService(
 
     public async Task<TaskDto?> UpdateTaskAsync(int taskId, int projectId, UpdateTaskRequest request, int userId)
     {
-        var task = await _taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
+        ProjectTask? task = await _taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
 
         if (task is null)
-        {
             return null;
-        }
 
         _mapper.Map(request, task);
         await _taskRepository.SaveChangesAsync();
@@ -80,11 +78,9 @@ public class TaskService(
         var task = await _taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
 
         if (task is null)
-        {
             return null;
-        }
 
-        task.IsCompleted = true;
+        task.IsCompleted = !task.IsCompleted;
         task.CompletedAt = DateTime.UtcNow;
 
         await _taskRepository.SaveChangesAsync();
@@ -97,9 +93,7 @@ public class TaskService(
         var task = await _taskRepository.GetTaskWithProjectAsync(taskId, projectId, userId);
 
         if (task is null)
-        {
             return false;
-        }
 
         _taskRepository.Remove(task);
         await _taskRepository.SaveChangesAsync();

@@ -60,9 +60,7 @@ public class ProjectService(IProjectRepository _projectRepository, IMapper _mapp
         var project = await _projectRepository.GetUserProjectWithTasksAsync(projectId);
 
         if (project is null)
-        {
             return null;
-        }
 
         _mapper.Map(request, project);
         await _projectRepository.SaveChangesAsync();

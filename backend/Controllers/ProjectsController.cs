@@ -64,7 +64,7 @@ public class ProjectsController(IProjectService _projectService) : ControllerBas
         if (!result)
             return NotFound("Project not found");
 
-        return NoContent();
+        return Ok(new ApiResponse("Project Deleted Successfully", StatusCodes.Status200OK));
     }
 
     [HttpGet("{id}/progress")]
