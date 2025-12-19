@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Project, Task, ProjectProgress } from '@/types';
-import { projectsApi, tasksApi } from '@/lib/api';
-import Header from '@/components/Header';
-import ProgressBar from '@/components/ProgressBar';
-import TaskItem from '@/components/TaskItem';
-import CreateTaskDialog from '@/components/CreateTaskDialog';
-import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, ListTodo, Trash2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import { Project, Task, ProjectProgress } from "@/types";
+import { projectsApi, tasksApi } from "@/lib/api";
+import Header from "@/components/Header";
+import ProgressBar from "@/components/ProgressBar";
+import TaskItem from "@/components/TaskItem";
+import CreateTaskDialog from "@/components/CreateTaskDialog";
+import { Button } from "@/components/ui/button";
+import { Loader2, ArrowLeft, ListTodo, Trash2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,19 +19,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [project, setProject] = useState<Project | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [progress, setProgress] = useState<ProjectProgress>({ 
-    totalTasks: 0, 
-    completedTasks: 0, 
-    progressPercentage: 0 
+  const [progress, setProgress] = useState<ProjectProgress>({
+    totalTasks: 0,
+    completedTasks: 0,
+    progressPercentage: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
@@ -56,31 +56,35 @@ const ProjectDetail = () => {
       setProgress(progressData);
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to load project',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load project",
+        variant: "destructive",
       });
-      navigate('/');
+      navigate("/");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCreateTask = async (data: { title: string; description: string; dueDate: string }) => {
+  const handleCreateTask = async (data: {
+    title: string;
+    description: string;
+    dueDate: string;
+  }) => {
     try {
       setIsCreatingTask(true);
       const newTask = await tasksApi.create(id!, data);
       setTasks([...tasks, newTask]);
       updateProgress([...tasks, newTask]);
       toast({
-        title: 'Success',
-        description: 'Task created successfully',
+        title: "Success",
+        description: "Task created successfully",
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to create task',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to create task",
+        variant: "destructive",
       });
     } finally {
       setIsCreatingTask(false);
@@ -90,14 +94,16 @@ const ProjectDetail = () => {
   const handleToggleTask = async (taskId: string) => {
     try {
       const updatedTask = await tasksApi.toggleComplete(taskId);
-      const updatedTasks = tasks.map((t) => (t.id === taskId ? updatedTask : t));
+      const updatedTasks = tasks.map((t) =>
+        t.id === taskId ? updatedTask : t
+      );
       setTasks(updatedTasks);
       updateProgress(updatedTasks);
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update task',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to update task",
+        variant: "destructive",
       });
     }
   };
@@ -109,14 +115,14 @@ const ProjectDetail = () => {
       setTasks(updatedTasks);
       updateProgress(updatedTasks);
       toast({
-        title: 'Success',
-        description: 'Task deleted',
+        title: "Success",
+        description: "Task deleted",
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete task',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to delete task",
+        variant: "destructive",
       });
     }
   };
@@ -126,15 +132,15 @@ const ProjectDetail = () => {
       setIsDeletingProject(true);
       await projectsApi.delete(id!);
       toast({
-        title: 'Success',
-        description: 'Project deleted',
+        title: "Success",
+        description: "Project deleted",
       });
-      navigate('/');
+      navigate("/");
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete project',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to delete project",
+        variant: "destructive",
       });
     } finally {
       setIsDeletingProject(false);
@@ -176,10 +182,10 @@ const ProjectDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
         {/* Back Link */}
-        <Link 
+        <Link
           to="/"
           className="inline-flex items-center gap-2 font-bold uppercase tracking-wide mb-6 hover:text-primary transition-colors"
         >
@@ -217,12 +223,13 @@ const ProjectDetail = () => {
 
         {/* Actions */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <h3 className="text-2xl font-bold uppercase tracking-wide">
-            Tasks
-          </h3>
+          <h3 className="text-2xl font-bold uppercase tracking-wide">Tasks</h3>
           <div className="flex items-center gap-4">
-            <CreateTaskDialog onSubmit={handleCreateTask} isLoading={isCreatingTask} />
-            
+            <CreateTaskDialog
+              onSubmit={handleCreateTask}
+              isLoading={isCreatingTask}
+            />
+
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
@@ -239,7 +246,8 @@ const ProjectDetail = () => {
                     Delete Project?
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-muted-foreground">
-                    This will permanently delete the project and all its tasks. This action cannot be undone.
+                    This will permanently delete the project and all its tasks.
+                    This action cannot be undone.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="gap-4">
@@ -254,7 +262,7 @@ const ProjectDetail = () => {
                     {isDeletingProject ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
                     ) : (
-                      'Delete'
+                      "Delete"
                     )}
                   </AlertDialogAction>
                 </AlertDialogFooter>

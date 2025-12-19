@@ -1,18 +1,17 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { Project, ProjectProgress } from '@/types';
-import { projectsApi } from '@/lib/api';
-import Header from '@/components/Header';
-import ProjectCard from '@/components/ProjectCard';
-import CreateProjectDialog from '@/components/CreateProjectDialog';
-import { Loader2, FolderOpen } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Project, ProjectProgress } from "@/types";
+import { projectsApi } from "@/lib/api";
+import Header from "@/components/Header";
+import ProjectCard from "@/components/ProjectCard";
+import CreateProjectDialog from "@/components/CreateProjectDialog";
+import { Loader2, FolderOpen } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Home = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
-  const [progressMap, setProgressMap] = useState<Record<string, ProjectProgress>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -25,52 +24,38 @@ const Home = () => {
       setIsLoading(true);
       const data = await projectsApi.getAll();
       setProjects(data);
-      
-      // Load progress for each project
-      const progressPromises = data.map(async (project) => {
-        try {
-          const progress = await projectsApi.getProgress(project.id);
-          return { id: project.id, progress };
-        } catch {
-          return { id: project.id, progress: { totalTasks: 0, completedTasks: 0, progressPercentage: 0 } };
-        }
-      });
-      
-      const progressResults = await Promise.all(progressPromises);
-      const newProgressMap: Record<string, ProjectProgress> = {};
-      progressResults.forEach(({ id, progress }) => {
-        newProgressMap[id] = progress;
-      });
-      setProgressMap(newProgressMap);
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to load projects',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load projects",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCreateProject = async (data: { title: string; description?: string }) => {
+  const handleCreateProject = async (data: {
+    title: string;
+    description?: string;
+  }) => {
     try {
       setIsCreating(true);
-      const newProject = await projectsApi.create(data);
-      setProjects([newProject, ...projects]);
-      setProgressMap({
-        ...progressMap,
-        [newProject.id]: { totalTasks: 0, completedTasks: 0, progressPercentage: 0 },
-      });
+      const response = await projectsApi.create(data);
+
+      if (response?.statusCode === 201) {
+        await loadProjects();
+      }
+
       toast({
-        title: 'Success',
-        description: 'Project created successfully',
+        title: "Success",
+        description: "Project created successfully",
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to create project',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to create project",
+        variant: "destructive",
       });
     } finally {
       setIsCreating(false);
@@ -80,7 +65,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
@@ -97,7 +82,10 @@ const Home = () => {
           <h3 className="text-2xl font-bold uppercase tracking-wide">
             Your Projects
           </h3>
-          <CreateProjectDialog onSubmit={handleCreateProject} isLoading={isCreating} />
+          <CreateProjectDialog
+            onSubmit={handleCreateProject}
+            isLoading={isCreating}
+          />
         </div>
 
         {/* Projects Grid */}
@@ -121,11 +109,7 @@ const Home = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                progress={progressMap[project.id]}
-              />
+              <ProjectCard key={project.id} project={project} />
             ))}
           </div>
         )}

@@ -38,7 +38,8 @@ public class ProjectsController(IProjectService _projectService) : ControllerBas
         bool result = await _projectService.CreateProjectAsync(request, userId);
         if(!result)
             return BadRequest("Could not create project");
-        return Created();
+        return StatusCode(StatusCodes.Status201Created,
+                    new ApiResponse("Project created successfully", StatusCodes.Status201Created));
     }
 
     [HttpPut("{id}")]

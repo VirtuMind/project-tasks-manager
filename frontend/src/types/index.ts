@@ -18,8 +18,8 @@ export interface Project {
   id: string;
   title: string;
   description?: string;
-  userId: string;
   createdAt: string;
+  stats: ProjectProgress;
 }
 
 export interface ProjectProgress {
@@ -33,7 +33,7 @@ export interface AuthState {
   token: string | null;
 }
 
-export interface ApiError {
+export interface ApiResponse {
   message: string;
-  StatusCode?: number;
+  statusCode?: number;
 }

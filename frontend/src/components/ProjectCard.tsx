@@ -1,19 +1,15 @@
-import { Link } from 'react-router-dom';
-import { Project, ProjectProgress } from '@/types';
-import ProgressBar from './ProgressBar';
-import { Folder, ArrowRight } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Project, ProjectProgress } from "@/types";
+import ProgressBar from "./ProgressBar";
+import { Folder, ArrowRight } from "lucide-react";
 
 interface ProjectCardProps {
   project: Project;
-  progress?: ProjectProgress;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, progress }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
-    <Link 
-      to={`/projects/${project.id}`}
-      className="block group"
-    >
+    <Link to={`/projects/${project.id}`} className="block group">
       <div className="border-4 border-foreground bg-card p-6 shadow-md hover:shadow-lg hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -38,11 +34,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, progress }) => {
           </p>
         )}
 
-        {progress && (
-          <ProgressBar 
-            progress={progress.progressPercentage}
-            total={progress.totalTasks}
-            completed={progress.completedTasks}
+        {project.stats && (
+          <ProgressBar
+            progress={project.stats.progressPercentage}
+            total={project.stats.totalTasks}
+            completed={project.stats.completedTasks}
             size="sm"
           />
         )}

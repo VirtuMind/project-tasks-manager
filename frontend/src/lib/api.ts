@@ -1,12 +1,20 @@
-import { User, Project, Task, ProjectProgress, ApiError, AuthState } from '@/types';
+import {
+  User,
+  Project,
+  Task,
+  ProjectProgress,
+  AuthState,
+  ApiResponse,
+} from "@/types";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5062/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5062/api";
 
 // Helper to get auth token
 const getAuthHeaders = (): HeadersInit => {
-  const token = localStorage.getItem('auth_token');
+  const token = localStorage.getItem("auth_token");
   return {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 };
@@ -25,8 +33,8 @@ async function fetchApi<T>(
   });
 
   if (!response.ok) {
-    const error: ApiError = await response.json().catch(() => ({
-      message: 'An unexpected error occurred',
+    const error: ApiResponse = await response.json().catch(() => ({
+      message: "An unexpected error occurred",
       status: response.status,
     }));
     throw error;
@@ -38,8 +46,8 @@ async function fetchApi<T>(
 // Auth API
 export const authApi = {
   login: async (email: string, password: string): Promise<AuthState> => {
-    return fetchApi('/auth/login', {
-      method: 'POST',
+    return fetchApi("/auth/login", {
+      method: "POST",
       body: JSON.stringify({ email, password }),
     });
   },
@@ -48,33 +56,32 @@ export const authApi = {
 // Projects API
 export const projectsApi = {
   getAll: async (): Promise<Project[]> => {
-    return fetchApi('/projects');
+    return fetchApi("/projects");
   },
 
   getById: async (id: string): Promise<Project> => {
     return fetchApi(`/projects/${id}`);
   },
 
-  create: async (data: { title: string; description?: string }): Promise<Project> => {
-    return fetchApi('/projects', {
-      method: 'POST',
+  create: async (data: {
+    title: string;
+    description?: string;
+  }): Promise<ApiResponse> => {
+    return fetchApi("/projects", {
+      method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   update: async (id: string, data: Partial<Project>): Promise<Project> => {
     return fetchApi(`/projects/${id}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
   delete: async (id: string): Promise<void> => {
-    return fetchApi(`/projects/${id}`, { method: 'DELETE' });
-  },
-
-  getProgress: async (id: string): Promise<ProjectProgress> => {
-    return fetchApi(`/projects/${id}/progress`);
+    return fetchApi(`/projects/${id}`, { method: "DELETE" });
   },
 };
 
@@ -89,23 +96,23 @@ export const tasksApi = {
     data: { title: string; description: string; dueDate: string }
   ): Promise<Task> => {
     return fetchApi(`/projects/${projectId}/tasks`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(data),
     });
   },
 
   update: async (taskId: string, data: Partial<Task>): Promise<Task> => {
     return fetchApi(`/tasks/${taskId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     });
   },
 
   toggleComplete: async (taskId: string): Promise<Task> => {
-    return fetchApi(`/tasks/${taskId}/toggle`, { method: 'PATCH' });
+    return fetchApi(`/tasks/${taskId}/toggle`, { method: "PATCH" });
   },
 
   delete: async (taskId: string): Promise<void> => {
-    return fetchApi(`/tasks/${taskId}`, { method: 'DELETE' });
+    return fetchApi(`/tasks/${taskId}`, { method: "DELETE" });
   },
 };
