@@ -49,7 +49,7 @@ namespace ProjectTasksManager.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("ProjectTasksManager.Models.ProjectTask", b =>
@@ -88,7 +88,7 @@ namespace ProjectTasksManager.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("ProjectTasksManager.Models.User", b =>
@@ -123,7 +123,7 @@ namespace ProjectTasksManager.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ProjectTasksManager.Models.Project", b =>

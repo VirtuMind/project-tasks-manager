@@ -36,6 +36,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         {
             entity.Property(t => t.Title).HasMaxLength(200);
             entity.Property(t => t.Description).HasMaxLength(1000);
+            entity.Property(t => t.DueDate)
+                .HasConversion(value => value.HasValue ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc) : (DateTime?)null,
+                                               value => value.HasValue ? DateTime.SpecifyKind(value.Value, DateTimeKind.Utc) : (DateTime?)null);
 
             entity.HasOne(t => t.Project)
                   .WithMany(p => p.Tasks)
