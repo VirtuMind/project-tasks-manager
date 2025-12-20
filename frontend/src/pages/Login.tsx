@@ -54,7 +54,7 @@ const Login = () => {
               <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold text-destructive">Error</p>
-                <p className="text-sm text-destructive">{error.message}</p>
+                <p className="text-sm text-destructive">{error}</p>
               </div>
             </div>
           )}

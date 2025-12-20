@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { User, AuthState, ApiError } from "@/types";
+import { User, AuthState, ApiResponse } from "@/types";
 import { authApi } from "@/lib/api";
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  error: ApiError | null;
+  error: string | null;
   isLoading: boolean;
   clearError: () => void;
   isAuthenticated: boolean;
@@ -16,13 +16,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(() =>
-    JSON.parse(localStorage.getItem("auth_user") || null)
-  );
+  const [user, setUser] = useState<User | null>(() => {
+    const stored = localStorage.getItem("auth_user");
+    return stored ? JSON.parse(stored) : null;
+  });
   const [token, setToken] = useState<string | null>(() =>
     localStorage.getItem("auth_token")
   );
-  const [error, setError] = useState<ApiError | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const isAuthenticated = token !== null && user !== null;
@@ -37,9 +38,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setToken(response.token);
       setUser(response.user);
     } catch (err) {
-      const apiError = err as ApiError;
-      setError(apiError);
-      throw apiError;
+      const errorMessage = err instanceof Error ? err.message : "Login failed";
+      setError(errorMessage);
+      throw err;
     } finally {
       setIsLoading(false);
     }
