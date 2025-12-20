@@ -1,6 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Task, ProjectProgress, ProjectDetails, NewTask } from "@/types";
+import {
+  Task,
+  ProjectProgress,
+  ProjectDetails,
+  NewTask,
+  TaskStatus,
+} from "@/types";
 import { projectsApi, tasksApi } from "@/lib/api";
 import Header from "@/components/Header";
 import ProgressBar from "@/components/ProgressBar";
@@ -8,8 +14,16 @@ import TaskItem from "@/components/TaskItem";
 import CreateTaskDialog from "@/components/CreateTaskDialog";
 import EditProjectDialog from "@/components/EditProjectDialog";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, ListTodo, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Loader2, ArrowLeft, ListTodo, Trash2, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +52,8 @@ const ProjectDetail = () => {
   const [isDeletingProject, setIsDeletingProject] = useState(false);
   const [isUpdatingProject, setIsUpdatingProject] = useState(false);
   const [isUpdatingTask, setIsUpdatingTask] = useState(false);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<TaskStatus>("all");
 
   useEffect(() => {
     if (id) {
@@ -216,8 +232,20 @@ const ProjectDetail = () => {
     return null;
   }
 
-  const pendingTasks = project.tasks.filter((t) => !t.isCompleted);
-  const completedTasks = project.tasks.filter((t) => t.isCompleted);
+  // Filter tasks
+  const filteredTasks = project.tasks.filter((t) => {
+    const matchesSearch =
+      t.title.toLowerCase().includes(search.toLowerCase()) ||
+      t.description?.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "pending" && !t.isCompleted) ||
+      (statusFilter === "completed" && t.isCompleted);
+    return matchesSearch && matchesStatus;
+  });
+
+  const pendingTasks = filteredTasks.filter((t) => !t.isCompleted);
+  const completedTasks = filteredTasks.filter((t) => t.isCompleted);
 
   return (
     <div className="min-h-screen bg-background">
@@ -311,29 +339,56 @@ const ProjectDetail = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
           <h3 className="text-2xl font-bold uppercase tracking-wide">Tasks</h3>
-          <div className="flex items-center gap-4">
-            <CreateTaskDialog
-              onSubmit={handleCreateTask}
-              isLoading={isCreatingTask}
-            />
-          </div>
+          <CreateTaskDialog
+            onSubmit={handleCreateTask}
+            isLoading={isCreatingTask}
+          />
         </div>
 
         {/* Tasks List */}
-        {project.tasks.length === 0 ? (
-          <div className="text-center">
+        {filteredTasks.length === 0 ? (
+          <div className="text-center py-8">
             <ListTodo className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
             <h4 className="text-xl font-bold uppercase tracking-wide mb-2">
-              No tasks yet
+              {project.tasks.length === 0
+                ? "No tasks yet"
+                : "No matching tasks"}
             </h4>
             <p className="text-muted-foreground font-mono">
-              Add your first task to get started
+              {project.tasks.length === 0
+                ? "Add your first task to get started"
+                : "Try a different search or filter"}
             </p>
           </div>
         ) : (
           <div className="space-y-8">
+            {/* Search & Filter */}
+            <div className="flex flex-wrap gap-3 mb-6">
+              <div className="relative flex-1 min-w-[200px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search tasks..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9 border-2 border-foreground"
+                />
+              </div>
+              <Select
+                value={statusFilter}
+                onValueChange={(v: TaskStatus) => setStatusFilter(v)}
+              >
+                <SelectTrigger className="w-36 border-2 border-foreground">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             {/* Pending Tasks */}
             {pendingTasks.length > 0 && (
               <div>

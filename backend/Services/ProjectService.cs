@@ -8,6 +8,7 @@ namespace ProjectTasksManager.Services;
 public interface IProjectService
 {
     Task<List<ProjectDto>> GetUserProjectsAsync(int userId);
+    Task<PaginatedResponse<ProjectDto>> GetUserProjectsPaginatedAsync(int userId, int page, int limit);
     Task<ProjectDto?> GetProjectByIdAsync(int projectId);
     Task<ProjectDto> CreateProjectAsync(CreateProjectRequest request, int userId);
     Task<ProjectDto?> UpdateProjectAsync(int projectId, UpdateProjectRequest request, int userId);
@@ -22,6 +23,19 @@ public class ProjectService(IProjectRepository _projectRepository, IMapper _mapp
     {
         List<Project> projects = await _projectRepository.GetUserProjectsWithTasksAsync(userId);
         return _mapper.Map<List<ProjectDto>>(projects);
+    }
+
+    public async Task<PaginatedResponse<ProjectDto>> GetUserProjectsPaginatedAsync(int userId, int page, int limit)
+    {
+        var (projects, total) = await _projectRepository.GetUserProjectsPaginatedAsync(userId, page, limit);
+        return new PaginatedResponse<ProjectDto>
+        {
+            Items = _mapper.Map<List<ProjectDto>>(projects),
+            TotalCount = total,
+            Page = page,
+            Limit = limit,
+            TotalPages = (int)Math.Ceiling(total / (double)limit)
+        };
     }
 
     public async Task<ProjectDto?> GetProjectByIdAsync(int projectId)

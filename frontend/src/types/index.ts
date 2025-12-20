@@ -14,6 +14,8 @@ export interface Task {
   createdAt: string;
 }
 
+export type TaskStatus = "all" | "pending" | "completed";
+
 export interface NewTask {
   title: string;
   description?: string;
@@ -46,4 +48,12 @@ export interface AuthState {
 export interface ApiResponse {
   message: string;
   statusCode?: number;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  totalCount: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }

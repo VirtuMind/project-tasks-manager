@@ -7,6 +7,7 @@ namespace ProjectTasksManager.Repositories;
 public interface IProjectRepository
 {
     Task<List<Project>> GetUserProjectsWithTasksAsync(int userId);
+    Task<(List<Project>, int)> GetUserProjectsPaginatedAsync(int userId, int page, int limit);
     Task<Project?> GetByIdAsync(int projectId);
     Task<Project?> GetProjectDetailsByIdAndUserIdAsync(int projectId, int userId);
     Task<Project?> GetUserProjectWithTasksAsync(int projectId);
@@ -25,6 +26,18 @@ public class ProjectRepository(AppDbContext _context) : IProjectRepository
             .Include(p => p.Tasks)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
+    }
+
+    public async Task<(List<Project>, int)> GetUserProjectsPaginatedAsync(int userId, int page, int limit)
+    {
+        var query = _context.Projects
+            .Where(p => p.UserId == userId)
+            .Include(p => p.Tasks)
+            .OrderByDescending(p => p.CreatedAt);
+
+        var total = await query.CountAsync();
+        var items = await query.Skip((page - 1) * limit).Take(limit).ToListAsync();
+        return (items, total);
     }
 
     public async Task<Project?> GetByIdAsync(int projectId)

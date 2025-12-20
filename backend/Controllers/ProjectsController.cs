@@ -12,11 +12,14 @@ namespace ProjectTasksManager.Controllers;
 public class ProjectsController(IProjectService _projectService) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<List<ProjectDto>>> GetProjects()
+    public async Task<ActionResult<PaginatedResponse<ProjectDto>>> GetProjects([FromQuery] int page = 1, [FromQuery] int limit = 9)
     {
+        if (page < 1) page = 1;
+        if (limit < 1 || limit > 50) limit = 9;
+        
         int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
-        var projects = await _projectService.GetUserProjectsAsync(userId);
-        return Ok(projects);
+        var result = await _projectService.GetUserProjectsPaginatedAsync(userId, page, limit);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

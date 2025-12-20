@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { Project, ProjectProgress } from "@/types";
+import { Project } from "@/types";
 import { projectsApi } from "@/lib/api";
 import Header from "@/components/Header";
 import ProjectCard from "@/components/ProjectCard";
 import CreateProjectDialog from "@/components/CreateProjectDialog";
-import { Loader2, FolderOpen } from "lucide-react";
+import { Loader2, FolderOpen, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Home = () => {
   const { user } = useAuth();
@@ -14,16 +22,18 @@ const Home = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-
-  useEffect(() => {
-    loadProjects();
-  }, []);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(9);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const loadProjects = async () => {
     try {
       setIsLoading(true);
-      const data = await projectsApi.getAll();
-      setProjects(data);
+      const data = await projectsApi.getAll(page, limit);
+      setProjects(data.items);
+      setTotalPages(data.totalPages);
+      setTotalCount(data.totalCount);
     } catch (error) {
       toast({
         title: "Error",
@@ -35,15 +45,20 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    loadProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, limit]);
+
   const handleCreateProject = async (data: {
     title: string;
     description?: string;
   }) => {
     try {
       setIsCreating(true);
-      const response = await projectsApi.create(data);
-      setProjects([response, ...projects]);
-
+      await projectsApi.create(data);
+      setPage(1); // Go to first page to see new project
+      loadProjects();
       toast({
         title: "Success",
         description: "Project created successfully",
@@ -75,14 +90,32 @@ const Home = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
           <h3 className="text-2xl font-bold uppercase tracking-wide">
             Your Projects
           </h3>
-          <CreateProjectDialog
-            onSubmit={handleCreateProject}
-            isLoading={isCreating}
-          />
+          <div className="flex items-center gap-3">
+            <Select
+              value={String(limit)}
+              onValueChange={(v) => {
+                setLimit(Number(v));
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-24 border-2 border-foreground">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="6">6</SelectItem>
+                <SelectItem value="9">9</SelectItem>
+                <SelectItem value="12">12</SelectItem>
+              </SelectContent>
+            </Select>
+            <CreateProjectDialog
+              onSubmit={handleCreateProject}
+              isLoading={isCreating}
+            />
+          </div>
         </div>
 
         {/* Projects Grid */}
@@ -108,6 +141,31 @@ const Home = () => {
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <Button
+              variant="outline"
+              onClick={() => setPage((p) => p - 1)}
+              disabled={page <= 1}
+              className="border-2 border-foreground"
+            >
+              <ChevronLeft className="h-4 w-4" /> Prev
+            </Button>
+            <span className="font-mono">
+              Page {page} of {totalPages} ({totalCount} total)
+            </span>
+            <Button
+              variant="outline"
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page >= totalPages}
+              className="border-2 border-foreground"
+            >
+              Next <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         )}
       </main>

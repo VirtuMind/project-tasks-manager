@@ -5,6 +5,7 @@ import {
   ApiResponse,
   ProjectDetails,
   NewTask,
+  PaginatedResponse,
 } from "@/types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -52,8 +53,8 @@ export const authApi = {
 
 // Projects API
 export const projectsApi = {
-  getAll: async (): Promise<Project[]> => {
-    return fetchApi("/projects");
+  getAll: async (page = 1, limit = 9): Promise<PaginatedResponse<Project>> => {
+    return fetchApi(`/projects?page=${page}&limit=${limit}`);
   },
 
   getById: async (id: string): Promise<ProjectDetails> => {

@@ -33,4 +33,13 @@ public record ProjectProgressDto
     public double ProgressPercentage { get; init; }
 }
 
+public record PaginatedResponse<T>
+{
+    public List<T> Items { get; init; } = [];
+    public int TotalCount { get; init; }
+    public int Page { get; init; }
+    public int Limit { get; init; }
+    public int TotalPages { get; init; }
+}
+
 
