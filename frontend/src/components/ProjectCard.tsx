@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Project, ProjectProgress } from "@/types";
 import ProgressBar from "./ProgressBar";
-import { Folder, ArrowRight } from "lucide-react";
+import { ArrowRight, FolderKanban } from "lucide-react";
 
 interface ProjectCardProps {
   project: Project;
@@ -14,7 +14,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 border-4 border-foreground bg-primary flex items-center justify-center">
-              <Folder className="h-6 w-6 text-primary-foreground" />
+              <FolderKanban className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
               <h3 className="text-xl font-bold uppercase tracking-wide line-clamp-1">

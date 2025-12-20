@@ -1,32 +1,35 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Plus, Loader2 } from 'lucide-react';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Plus, Loader2 } from "lucide-react";
 
 interface CreateProjectDialogProps {
   onSubmit: (data: { title: string; description?: string }) => Promise<void>;
   isLoading?: boolean;
 }
 
-const CreateProjectDialog: React.FC<CreateProjectDialogProps> = ({ onSubmit, isLoading }) => {
+const CreateProjectDialog: React.FC<CreateProjectDialogProps> = ({
+  onSubmit,
+  isLoading,
+}) => {
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit({ title, description: description || undefined });
-    setTitle('');
-    setDescription('');
+    setTitle("");
+    setDescription("");
     setOpen(false);
   };
 
@@ -46,7 +49,10 @@ const CreateProjectDialog: React.FC<CreateProjectDialogProps> = ({ onSubmit, isL
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-sm font-bold uppercase tracking-wide">
+            <Label
+              htmlFor="title"
+              className="text-sm font-bold uppercase tracking-wide"
+            >
               Title *
             </Label>
             <Input
@@ -60,7 +66,10 @@ const CreateProjectDialog: React.FC<CreateProjectDialogProps> = ({ onSubmit, isL
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-sm font-bold uppercase tracking-wide">
+            <Label
+              htmlFor="description"
+              className="text-sm font-bold uppercase tracking-wide"
+            >
               Description
             </Label>
             <Textarea
@@ -84,12 +93,12 @@ const CreateProjectDialog: React.FC<CreateProjectDialogProps> = ({ onSubmit, isL
             <Button
               type="submit"
               disabled={isLoading || !title.trim()}
-              className="flex-1 h-12 font-bold uppercase tracking-wide border-4 border-foreground bg-primary text-primary-foreground hover:translate-x-1 hover:translate-y-1 hover:shadow-none shadow-md transition-all"
+              className="flex-1 h-12 font-bold uppercase tracking-wide border-4 border-foreground bg-success text-success-foreground hover:translate-x-1 hover:translate-y-1 hover:shadow-none hover:bg-success/90 shadow-md transition-all"
             >
               {isLoading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                'Create'
+                "Create"
               )}
             </Button>
           </div>
