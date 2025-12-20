@@ -20,32 +20,32 @@ It is recommended to use Docker and Docker Compose to run the application easily
    cd project-tasks-manager
    ```
 
-2. **Start all services**
+2. **Environment variables**
+
+   The Docker Compose file uses environment variables for configuration. You should set them in `.env` file after creating it in the root directory. Use the `.env.example` file provided as a template.
+
+   | Variable            | Service  | Description                    |
+   | ------------------- | -------- | ------------------------------ |
+   | `POSTGRES_USER`     | db       | Database username              |
+   | `POSTGRES_PASSWORD` | db       | Database password              |
+   | `POSTGRES_DB`       | db       | Database name                  |
+   | `JWT_KEY`           | backend  | JWT signing key (min 32 chars) |
+   | `VITE_API_BASE_URL` | frontend | Backend API URL                |
+
+3. **Start all services**
 
    ```bash
    docker-compose up -d --build
    ```
 
-3. **Access the application**
+4. **Access the application**
    - Frontend: [http://localhost:3000](http://localhost:3000)
    - Backend API: [http://localhost:5062](http://localhost:5062)
    - Swagger Documentation: [http://localhost:5062/swagger](http://localhost:5062/swagger)
-4. **Seeded users for testing**
+5. **Seeded users for testing**
    - email: `younes@example.com`, password: `younes123`
    - email: `hamid@example.com`, password: `hamid123`
    - email: `houria@example.com`, password: `houria123`
-
-### Environment Variables
-
-The Docker Compose file uses environment variables for configuration. You should set them in a `.env` file in the root directory. use the .env.example file as a template.
-
-| Variable            | Service  | Description                    |
-| ------------------- | -------- | ------------------------------ |
-| `POSTGRES_USER`     | db       | Database username              |
-| `POSTGRES_PASSWORD` | db       | Database password              |
-| `POSTGRES_DB`       | db       | Database name                  |
-| `JWT_KEY`           | backend  | JWT signing key (min 32 chars) |
-| `VITE_API_BASE_URL` | frontend | Backend API URL                |
 
 ## Technologies
 
