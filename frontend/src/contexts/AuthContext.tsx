@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { User, AuthState, ApiResponse } from "@/types";
 import { authApi } from "@/lib/api";
+import { toast } from "sonner";
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<void>;
@@ -52,6 +53,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setToken(null);
     setUser(null);
     setError(null);
+    toast.info("Logged out successfully");
   };
 
   const clearError = () => setError(null);
