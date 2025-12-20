@@ -7,7 +7,7 @@ import {
   NewTask,
 } from "@/types";
 
-const API_BASE_URL = "http://localhost:5062/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const getAuthHeaders = (): HeadersInit => {
   const token = localStorage.getItem("auth_token");
