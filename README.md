@@ -8,7 +8,6 @@ An application that allows users to create projects, manage tasks within those p
 <hr />
 <img width="1704" height="1770" alt="image" src="https://github.com/user-attachments/assets/3eb573a6-bd69-4549-b234-bb20b98ee4a0" />
 
-
 ## Run the application
 
 It is recommended to use Docker and Docker Compose to run the application easily. If you don't have Docker installed, please refer to the [Run locally (Without Docker)](#run-locally-without-docker) section.
@@ -17,6 +16,8 @@ It is recommended to use Docker and Docker Compose to run the application easily
 
 - [Docker](https://www.docker.com/get-started) (v20.10 or later)
 - [Docker Compose](https://docs.docker.com/compose/install/) (v2.0 or later)
+
+> Install Docker Desktop to get both Docker and Docker Compose.
 
 ### Quick Start
 
