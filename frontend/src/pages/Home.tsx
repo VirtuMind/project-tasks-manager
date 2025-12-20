@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import ProjectCard from "@/components/ProjectCard";
 import CreateProjectDialog from "@/components/CreateProjectDialog";
 import { Loader2, FolderOpen, ChevronLeft, ChevronRight } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,7 +18,6 @@ import {
 
 const Home = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -35,11 +34,7 @@ const Home = () => {
       setTotalPages(data.totalPages);
       setTotalCount(data.totalCount);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load projects",
-        variant: "destructive",
-      });
+      toast.error("Failed to load projects");
     } finally {
       setIsLoading(false);
     }
@@ -59,16 +54,9 @@ const Home = () => {
       await projectsApi.create(data);
       setPage(1); // Go to first page to see new project
       loadProjects();
-      toast({
-        title: "Success",
-        description: "Project created successfully",
-      });
+      toast.success("Project created successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create project",
-        variant: "destructive",
-      });
+      toast.error("Failed to create project");
     } finally {
       setIsCreating(false);
     }
@@ -77,7 +65,6 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-
       <main className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">

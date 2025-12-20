@@ -16,7 +16,7 @@ import EditProjectDialog from "@/components/EditProjectDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ArrowLeft, ListTodo, Trash2, Search } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -39,7 +39,6 @@ import {
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const [project, setProject] = useState<ProjectDetails | null>(null);
   const [progress, setProgress] = useState<ProjectProgress>({
@@ -68,11 +67,7 @@ const ProjectDetail = () => {
       setProject(projectDetails);
       setProgress(projectDetails.stats);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load project",
-        variant: "destructive",
-      });
+      toast.error("Failed to load project");
       navigate("/");
     } finally {
       setIsLoading(false);
@@ -87,16 +82,9 @@ const ProjectDetail = () => {
       setIsUpdatingProject(true);
       const response = await projectsApi.update(id!, data);
       setProject({ ...project!, ...response });
-      toast({
-        title: "Success",
-        description: "Project updated successfully",
-      });
+      toast.success("Project updated successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update project",
-        variant: "destructive",
-      });
+      toast.error("Failed to update project");
     } finally {
       setIsUpdatingProject(false);
     }
@@ -108,16 +96,9 @@ const ProjectDetail = () => {
       const response = await tasksApi.create(id!, newTask);
       setProject({ ...project!, tasks: [...project!.tasks, response] });
       updateProgress([...project!.tasks, response]);
-      toast({
-        title: "Success",
-        description: "Task created successfully",
-      });
+      toast.success("Task created successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create task",
-        variant: "destructive",
-      });
+      toast.error("Failed to create task");
     } finally {
       setIsCreatingTask(false);
     }
@@ -132,16 +113,9 @@ const ProjectDetail = () => {
       );
       setProject({ ...project!, tasks: updatedTasks });
       updateProgress(updatedTasks);
-      toast({
-        title: "Success",
-        description: "Task updated successfully",
-      });
+      toast.success("Task updated successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update task",
-        variant: "destructive",
-      });
+      toast.error("Failed to update task");
     } finally {
       setIsUpdatingTask(false);
     }
@@ -156,11 +130,7 @@ const ProjectDetail = () => {
       setProject({ ...project!, tasks: updatedTasks });
       updateProgress(updatedTasks);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update task",
-        variant: "destructive",
-      });
+      toast.error("Failed to update task");
     }
   };
 
@@ -170,16 +140,9 @@ const ProjectDetail = () => {
       const updatedTasks = project!.tasks.filter((t) => t.id !== taskId);
       setProject({ ...project!, tasks: updatedTasks });
       updateProgress(updatedTasks);
-      toast({
-        title: "Success",
-        description: "Task deleted",
-      });
+      toast.success("Task deleted successfully");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete task",
-        variant: "destructive",
-      });
+      toast.error("Failed to delete task");
     }
   };
 
@@ -187,17 +150,10 @@ const ProjectDetail = () => {
     try {
       setIsDeletingProject(true);
       await projectsApi.delete(id!);
-      toast({
-        title: "Success",
-        description: "Project deleted",
-      });
+      toast.success("Project deleted successfully");
       navigate("/");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete project",
-        variant: "destructive",
-      });
+      toast.error("Failed to delete project");
     } finally {
       setIsDeletingProject(false);
     }
