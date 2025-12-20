@@ -18,8 +18,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   };
 
   const getProgressColor = () => {
-    if (progress === 100) return "bg-success";
-    if (progress > 0) return "bg-warning";
+    if (progress > 0) return "bg-success";
     return "bg-muted";
   };
 
