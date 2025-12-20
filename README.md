@@ -2,6 +2,13 @@
 
 An application that allows users to create projects, manage tasks within those projects, and track progress.
 
+<img width="1704" height="954" alt="image" src="https://github.com/user-attachments/assets/54b135e9-c2ab-404e-b423-b27044e0beab" />
+<hr />
+<img width="1704" height="1028" alt="image" src="https://github.com/user-attachments/assets/42809ccd-6592-42b7-881e-a29dc4a8cfb6" />
+<hr />
+<img width="1704" height="1770" alt="image" src="https://github.com/user-attachments/assets/3eb573a6-bd69-4549-b234-bb20b98ee4a0" />
+
+
 ## Run the application
 
 It is recommended to use Docker and Docker Compose to run the application easily. If you don't have Docker installed, please refer to the [Run locally (Without Docker)](#run-locally-without-docker) section.
