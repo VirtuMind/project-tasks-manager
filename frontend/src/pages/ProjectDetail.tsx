@@ -303,6 +303,34 @@ const ProjectDetail = () => {
           />
         </div>
 
+        {/* Search & Filter */}
+        {project.tasks.length > 0 && (
+          <div className="flex flex-wrap gap-3 mb-6">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search tasks..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9 border-2 border-foreground"
+              />
+            </div>
+            <Select
+              value={statusFilter}
+              onValueChange={(v: TaskStatus) => setStatusFilter(v)}
+            >
+              <SelectTrigger className="w-36 border-2 border-foreground">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         {/* Tasks List */}
         {filteredTasks.length === 0 ? (
           <div className="text-center py-8">
@@ -320,31 +348,6 @@ const ProjectDetail = () => {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* Search & Filter */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search tasks..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 border-2 border-foreground"
-                />
-              </div>
-              <Select
-                value={statusFilter}
-                onValueChange={(v: TaskStatus) => setStatusFilter(v)}
-              >
-                <SelectTrigger className="w-36 border-2 border-foreground">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             {/* Pending Tasks */}
             {pendingTasks.length > 0 && (
               <div>
