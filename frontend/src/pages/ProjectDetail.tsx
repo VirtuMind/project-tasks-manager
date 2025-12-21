@@ -210,7 +210,7 @@ const ProjectDetail = () => {
       <main className="container mx-auto px-4 py-8">
         {/* Back Link */}
 
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <Link
             to="/"
             className="inline-flex items-center gap-2 font-bold uppercase tracking-wide hover:text-primary transition-colors"
@@ -219,7 +219,7 @@ const ProjectDetail = () => {
             Back to Projects
           </Link>
 
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <EditProjectDialog
               project={project}
               onSubmit={handleUpdateProject}
